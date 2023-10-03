@@ -26,3 +26,4 @@ class TFDropPath(layers.Layer):
         config = super().get_config()
         config.update({"rate": self.rate, "seed": self.seed})
         return config
+    

@@ -5,7 +5,8 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-import TFVideoFocalNetBlock
+from focal_modulation import TFVideoFocalNetBlock
+
 
 class TFBasicLayer(keras.Model):
     """ A basic Focal Transformer layer for one stage.
