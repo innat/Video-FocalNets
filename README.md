@@ -30,6 +30,7 @@ The Video-FocalNet checkpoints are available in both **SavedModel** and **H5** f
 
 **Inference**
 
+```python
 >>> from videofocalnet import VideoFocalNetT
 >>> model = VideoFocalNetT(name='FocalNetT_K400')
 >>> model.load_weights('TFVideoFocalNetT_K400_8x224.h5')
@@ -46,7 +47,7 @@ TensorShape([1, 400])
     for i in np.argsort(probabilities)[::-1]
 }
 >>> confidences
-
+```
 
 **Fine Tune**
 
