@@ -3,7 +3,9 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from layers import TFSpatioTemporalFocalModulation
+from ..layers import TFSpatioTemporalFocalModulation
+from ..layers import TFDropPath
+from ..layers import TFMlp
 
 
 class TFVideoFocalNetBlock(keras.Model):
@@ -86,14 +88,10 @@ class TFVideoFocalNetBlock(keras.Model):
             self.gamma_1 = 1.0
             self.gamma_2 = 1.0
             
-        self.H = None
-        self.W = None
 
-    def call(self, x):
- 
-        H, W = self.H, self.W
+    def call(self, x, height, width, return_stfm=False):
         input_shape = tf.shape(x)
-        B,L,C = (
+        batch_size, length, channel = (
             input_shape[0],
             input_shape[1],
             input_shape[2],
@@ -102,15 +100,22 @@ class TFVideoFocalNetBlock(keras.Model):
 
         # Focal Modulation
         x = x if self.use_postln else self.norm1(x)
-        x = tf.reshape(x, [B, H, W, C])
-        x = self.modulation(x)
-        x = tf.reshape(x, [B, H * W, C])
+        x = tf.reshape(x, [batch_size, height, width, channel])
+        spatio_temporal_fm = self.modulation(x)
+        x = tf.reshape(spatio_temporal_fm, [batch_size, height * width, channel])
         x = x if not self.use_postln else self.norm1(x)
 
         # FFN
         x = shortcut + self.drop_path(self.gamma_1 * x)
-        x = x + self.drop_path(
-            self.gamma_2 * (self.norm2(self.mlp(x)) if self.use_postln else self.mlp(self.norm2(x)))
-        )
+        if self.use_postln:
+            normed_x = self.norm2(self.mlp(x))
+        else:
+            normed_x = self.mlp(self.norm2(x))
+            
+        dropped_value = self.drop_path(self.gamma_2 * normed_x)
+        x = x + dropped_value
+        
+        if return_stfm:
+            return x, spatio_temporal_fm
 
         return x

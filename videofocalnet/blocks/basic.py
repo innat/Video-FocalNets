@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from focal_modulation import TFVideoFocalNetBlock
+from .focal_block import TFVideoFocalNetBlock
 
 
 class TFBasicLayer(keras.Model):
@@ -60,6 +60,7 @@ class TFBasicLayer(keras.Model):
         self.num_frames = num_frames
 
         # blocks
+        uid = keras.backend.get_uid(prefix="blocks")
         self.blocks = [
             TFVideoFocalNetBlock(
                 dim=dim,
@@ -75,7 +76,8 @@ class TFBasicLayer(keras.Model):
                 use_postln=use_postln,
                 use_postln_in_modulation=use_postln_in_modulation,
                 normalize_modulator=normalize_modulator,
-                num_frames=self.num_frames
+                num_frames=self.num_frames,
+                name=f"TFVideoFocalNetBlock_id{uid}"
             ) for i in range(depth)
         ]
 
@@ -92,16 +94,23 @@ class TFBasicLayer(keras.Model):
         else:
             self.downsample = None
 
-    def call(self, x, H, W):
+    def call(self, x, height, width, return_stfm=False):
         
+        sp_fm_dict = {}
         for i, blk in enumerate(self.blocks):
-            blk.H, blk.W = H, W
-            x = blk(x)
+            if return_stfm:
+                x, stfm = blk(x, height, width, return_stfm)
+                sp_fm_dict[f"{blk.name}{i+1}"] = stfm
+            else:
+                x = blk(x, height, width)
 
         if self.downsample is not None:
-            x = tf.reshape(x, [tf.shape(x)[0], H, W, -1])
-            x, Ho, Wo = self.downsample(x)
+            x = tf.reshape(x, [tf.shape(x)[0], height, width, -1])
+            x, height_o, width_o = self.downsample(x)
         else:
-            Ho, Wo = H, W
+            height_o, width_o = height, width
+            
+        if return_stfm:
+            return x, height_o, width_o, sp_fm_dict
 
-        return x, Ho, Wo
+        return x, height_o, width_o

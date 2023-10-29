@@ -1,3 +1,3 @@
 
-from focal_modulation import TFVideoFocalNetBlock
-from basic import TFBasicLayer
+from .focal_block import TFVideoFocalNetBlock
+from .basic import TFBasicLayer

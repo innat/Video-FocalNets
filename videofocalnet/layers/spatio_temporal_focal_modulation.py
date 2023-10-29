@@ -78,7 +78,7 @@ class TFSpatioTemporalFocalModulation(keras.Model):
 
     def call(self, x):
         input_shape = tf.shape(x)
-        B,H,W,C = (
+        batch_depth_size, height, width, channel = (
             input_shape[0],
             input_shape[1],
             input_shape[2],
@@ -86,13 +86,15 @@ class TFSpatioTemporalFocalModulation(keras.Model):
         )
         
         # pre linear projection temporal
-        t = self.num_frames
-        b = B // t
-        x_temporal = tf.reshape(x, [b, t, H, W, C])
+        depth = self.num_frames
+        batch_size = batch_depth_size // depth
+        x_temporal = tf.reshape(x, [batch_size, depth, height, width, channel])
         x_temporal = tf.transpose(x_temporal, [0, 2, 3, 1, 4])
-        x_temporal = tf.reshape(x_temporal, [b * H * W, t, C])
+        x_temporal = tf.reshape(x_temporal, [batch_size * height * width, depth, channel])
         x_temporal = self.f_temporal(x_temporal)
-        ctx_temporal, gates_temporal = tf.split(x_temporal, [C, self.focal_level+1], axis=-1)
+        ctx_temporal, gates_temporal = tf.split(
+            x_temporal, [channel, self.focal_level+1], axis=-1
+        )
         gates_temporal = tf.transpose(gates_temporal, [0, 2, 1])
 
         # context aggregration temporal
@@ -109,7 +111,7 @@ class TFSpatioTemporalFocalModulation(keras.Model):
 
         # pre linear projection spatial
         x = self.f(x)
-        q, ctx, gates = tf.split(x, [C, C, self.focal_level+1], axis=-1)
+        q, ctx, gates = tf.split(x, [channel, channel, self.focal_level+1], axis=-1)
         gates = tf.transpose(gates, [0, 3, 1, 2])
 
         # context aggregation spatial
@@ -132,12 +134,12 @@ class TFSpatioTemporalFocalModulation(keras.Model):
             ctx_all /= (self.focal_level+1)
 
         # focal modulation
-        ctx_all = tf.transpose(ctx_all, perm=[0, 2, 3, 1])
-        ctx_all_temporal = tf.transpose(ctx_all_temporal, perm=[0, 2, 1])
+        ctx_all = tf.transpose(ctx_all, [0, 2, 3, 1])
+        ctx_all_temporal = tf.transpose(ctx_all_temporal, [0, 2, 1])
         modulator_temporal = self.h_temporal(ctx_all_temporal)
-        modulator_temporal = tf.reshape(modulator_temporal, [b, H, W, t, C])
-        modulator_temporal = tf.transpose(modulator_temporal, perm=[0, 3, 1, 2, 4])
-        modulator_temporal = tf.reshape(modulator_temporal, [b*t, H, W, C])
+        modulator_temporal = tf.reshape(modulator_temporal, [batch_size, height, width, depth, channel])
+        modulator_temporal = tf.transpose(modulator_temporal, [0, 3, 1, 2, 4])
+        modulator_temporal = tf.reshape(modulator_temporal, [batch_size*depth, height, width, channel])
         modulator = self.h(ctx_all)
         
         x_out = q * modulator * modulator_temporal

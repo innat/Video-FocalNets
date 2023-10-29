@@ -5,7 +5,7 @@ from tensorflow.keras import layers
 
 
 class TFPatchEmbed(keras.Model):
-    r""" Image to Patch Embedding
+    """ Image to Patch Embedding
 
     Args:
         img_size (int): Image size.  Default: 224.
@@ -30,7 +30,6 @@ class TFPatchEmbed(keras.Model):
 
         patch_size = (patch_size, patch_size) if isinstance(patch_size, int) else patch_size
         patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1]]
-        
         self.img_size = img_size
         self.patch_size = patch_size
         self.patches_resolution = patches_resolution
@@ -78,26 +77,25 @@ class TFPatchEmbed(keras.Model):
         if self.tubelet_size == 1:
             x = self.proj(x)
             input_shape = tf.shape(x)
-            B,H,W,C = (
+            batch_size, height, width, channel = (
                 input_shape[0],
                 input_shape[1],
                 input_shape[2],
                 input_shape[3],
             )
-
             x = tf.reshape(
-                x, [B, H*W, C]
+                x, [batch_size, height*width, channel]
             )
             
             if self.norm is not None:
                 x = self.norm(x)
             
-            return x, H, W
+            return x, height, width
 
         else:
             x = self.proj(x)
             input_shape = tf.shape(x)
-            B,T,H,W,C = (
+            batch_size, depth, height, width, channel = (
                 input_shape[0],
                 input_shape[1],
                 input_shape[2],
@@ -105,10 +103,10 @@ class TFPatchEmbed(keras.Model):
                 input_shape[4],
             )
             x = tf.reshape(
-                x, [B*T, H*W, C]
+                x, [batch_size*depth, height*width, channel]
             )
 
             if self.norm is not None:
                 x = self.norm(x)
  
-            return x, H, W
+            return x, height, width

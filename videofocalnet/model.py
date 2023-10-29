@@ -10,15 +10,15 @@ import tensorflow as tf
 from tensorflow import keras 
 from tensorflow.keras import layers
 
-from layers import TFPatchEmbed
-from layers import TFAdaptiveAveragePooling1D
-from blocks import TFBasicLayer
+from videofocalnet.layers import TFPatchEmbed
+from videofocalnet.blocks import TFBasicLayer
+from .model_configs import MODEL_CONFIGS
 
 class TFVideoFocalNet(keras.Model):
     r"""Spatio Temporal Focal Modulation Networks (Video-FocalNets)
 
     Args:
-        img_size (int | tuple(int)): Input image size. Default 224
+        input_shape (int | tuple(int)): Input image size. Default 224
         patch_size (int | tuple(int)): Patch size. Default: 4
         in_chans (int): Number of input image channels. Default: 3
         num_classes (int): Number of classes for classification head. Default: 1000
@@ -41,7 +41,7 @@ class TFVideoFocalNet(keras.Model):
     """
     def __init__(
         self,
-        img_size=224, 
+        input_shape=224, 
         patch_size=4, 
         in_chans=3, 
         num_classes=1000,
@@ -79,7 +79,7 @@ class TFVideoFocalNet(keras.Model):
         
         # image embedding
         self.patch_embed = TFPatchEmbed(
-            img_size=(img_size, )*2, 
+            img_size=(input_shape, )*2, 
             patch_size=patch_size, 
             in_chans=in_chans, 
             embed_dim=embed_dim[0], 
@@ -127,25 +127,34 @@ class TFVideoFocalNet(keras.Model):
             self.basic_layers.append(layer)
             
         self.norm = norm_layer(axis=-1, name='norm')
-        self.avgpool = TFAdaptiveAveragePooling1D(1, name='adt1d_avg_pool')
-        self.head = layers.Dense(num_classes, name='head', dtype='float32') if num_classes > 0 else layers.Identity()
+        self.avgpool = layers.GlobalAveragePooling1D()
+        self.head = layers.Dense(
+            num_classes, name='head', dtype='float32'
+        ) if num_classes > 0 else layers.Identity()
 
-    def forward_features(self, x):
-        x, H, W = self.patch_embed(x)
+    def forward_features(self, x, return_stfm=False):
+        x, height, width = self.patch_embed(x)
         x = self.pos_drop(x)
         
+        stfm_dicts = {}
         for layer in self.basic_layers:
-            x, H, W = layer(x, H, W)
+            if return_stfm:
+                x, height, width, stfm_dict = layer(x, height, width, return_stfm)
+                stfm_dicts.update(stfm_dict)
+            else:
+                x, height, width = layer(x, height, width)
 
         x = self.norm(x)
         x = self.avgpool(x)
-        x = tf.reshape(x, [tf.shape(x)[0], -1])
+
+        if return_stfm:
+            return x, stfm_dicts
         
         return x
     
-    def call(self, x):
+    def call(self, x, return_stfm=False, **kwargs):
         input_shape = tf.shape(x)
-        b,t,h,w,c = (
+        batch_size, depth, height, width, channel = (
             input_shape[0],
             input_shape[1],
             input_shape[2],
@@ -155,16 +164,22 @@ class TFVideoFocalNet(keras.Model):
         
         if self.tubelet_size==1:
             x = tf.reshape(
-                x, [-1, h, w, c]
+                x, [-1, height, width, channel]
             )
             
         # forward passing    
-        x = self.forward_features(x)
+        x = self.forward_features(x, return_stfm)
+        if return_stfm:
+            x, stfm_dicts = x
         
         # Here just aggregate the corresponding frames of same video BxT, C
-        x = tf.reshape(x, [b, self.num_frames, -1])
+        x = tf.reshape(x, [batch_size, self.num_frames, -1])
         x = tf.reduce_mean(x, axis=1)
         x = self.head(x)
+        
+        if return_stfm:
+            return x, stfm_dicts
+        
         return x
     
     def build(self, input_shape):
@@ -176,3 +191,22 @@ class TFVideoFocalNet(keras.Model):
         return keras.Model(
             inputs=[x], outputs=self.call(x)
         )
+    
+
+def VideoFocalNetT(name='FocalNetT_K400', **kwargs):
+    config = MODEL_CONFIGS[name].copy()
+    config.update(kwargs)
+    model = TFVideoFocalNet(name=name, **config)
+    return model
+
+def VideoFocalNetS(name='FocalNetS_K400', **kwargs):
+    config = MODEL_CONFIGS[name].copy()
+    config.update(kwargs)
+    model = TFVideoFocalNet(name=name, **config)
+    return model
+
+def VideoFocalNetB(name='FocalNetB_K400', **kwargs):
+    config = MODEL_CONFIGS[name].copy()
+    config.update(kwargs)
+    model = TFVideoFocalNet(name=name, **config)
+    return model
