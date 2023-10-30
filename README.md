@@ -48,6 +48,13 @@ TensorShape([1, 400])
 }
 >>> confidences
 ```
+A classification results on a sample from [Kinetics-400](https://www.deepmind.com/open-source/kinetics).
+
+| Video                          | Top-5 |
+|:------------------------------:|:-----:|
+| ![](./assets/view1.gif)        | <pre>{<br>    'playing_cello': 0.895908474,<br>    'playing_violin': 0.02341162413,<br>    'playing_recorder': 0.001134991995,<br>    'playing_piano': 0.0010194962,<br>    'playing_clarinet': 0.000998203994<br>}</pre> |
+
+
 
 **Fine Tune**
 
