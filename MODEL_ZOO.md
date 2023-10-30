@@ -7,6 +7,8 @@ Some note:
   - `crop` means spatial crops (e.g., 3 for left/right/center)
   - `clip` means temporal clips (e.g., 4 means repeted sampling four clips with different start indices)
 
+Officially **Video-FocalNet** uses [`input_frame = 8`](https://github.com/TalalWasim/Video-FocalNets/blob/0909341725fec9103156085dd11e1c8d45d2d05b/configs/activitynet/video-focalnet_base.yaml#L6), `crop=3`, and `clip=4`. And, [`frame_rate = 4`](https://github.com/TalalWasim/Video-FocalNets/blob/0909341725fec9103156085dd11e1c8d45d2d05b/configs/activitynet/video-focalnet_base.yaml#L32). Check [this](https://github.com/TalalWasim/Video-FocalNets/issues/2#issuecomment-1733370954) thread. This (`#Frame = 8 x 3 x 4`) format use for all the following variants.
+
 ## Kinetics-400
 
 |       Model      |    Depth   | Dim | Kernels | Top-1 | Checkpoints | Config | Params (MB)
