@@ -51,9 +51,8 @@ TensorShape([1, 400])
 A classification results on a sample from [Kinetics-400](https://www.deepmind.com/open-source/kinetics).
 
 | Video                          | Top-5 |
-|:------------------------------:|:-----:|
-| ![](./assets/view1.gif)        | <pre>{<br>    'playing_cello': 0.895908474,<br>    'playing_violin': 0.02341162413,<br>    'playing_recorder': 0.001134991995,<br>    'playing_piano': 0.0010194962,<br>    'playing_clarinet': 0.000998203994<br>}</pre> |
-
+|:------------------------------:|:-----|
+| ![](./assets/view1.gif)        | <pre>{<br>    'playing cello': 0.8959084749221802,<br>    'playing violin': 0.023411624133586884,<br>    'playing recorder': 0.0011349919950589538,<br>    'playing piano': 0.00101949623785913,<br>    'playing clarinet': 0.0009982039919123054<br>}</pre> |
 
 
 **Fine Tune**
