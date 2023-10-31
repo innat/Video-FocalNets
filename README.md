@@ -12,11 +12,10 @@
 This is a unofficial `Keras` implementation of **Video-FocalNet**. The official `PyTorch` implementation is [here](https://github.com/TalalWasim/Video-FocalNets)
 
 ## News
-- **[02-11-2023]:** HuggingFace gradio app becomes available, [gradio]().
-- **[01-11-2023]:** GPU(s), TPU-VM for fine-tune training are supported, [colab]().
+- **[31-10-2023]:** GPU(s), TPU-VM for fine-tune training are supported, [colab](https://github.com/innat/Video-FocalNets/blob/main/notebooks/video_focalnet_video_classification.ipynb).
 - **[31-10-2023]:**  Video-FocalNet checkpoints for [Driving-48](http://www.svcl.ucsd.edu/projects/resound/dataset.html) becomes available, [link](https://github.com/innat/Video-FocalNets/releases/tag/v1.0).
-- **[31-10-2023]:**  Video-FocalNet checkpoints for [ActivityNet](http://activity-net.org/) becomes available, [link](https://github.com/innat/Video-FocalNets/releases/tag/v1.0).
-- **[30-10-2023]:**  Video-FocalNet checkpoints for [SSV2](https://developer.qualcomm.com/software/ai-datasets/something-something) becomes available, [link](https://github.com/innat/Video-FocalNets/releases/tag/v1.0).
+- **[30-10-2023]:**  Video-FocalNet checkpoints for [ActivityNet](http://activity-net.org/) becomes available, [link](https://github.com/innat/Video-FocalNets/releases/tag/v1.0).
+- **[29-10-2023]:**  Video-FocalNet checkpoints for [SSV2](https://developer.qualcomm.com/software/ai-datasets/something-something) becomes available, [link](https://github.com/innat/Video-FocalNets/releases/tag/v1.0).
 - **[28-10-2023]:**  Video-FocalNet checkpoints for [Kinetics-600](https://paperswithcode.com/dataset/kinetics-600) becomes available, [link](https://github.com/innat/Video-FocalNets/releases/tag/v1.0).
 - **[27-10-2023]:**  Video-FocalNet checkpoints for [Kinetics-400](https://paperswithcode.com/dataset/kinetics-400-1) becomes available, [link](https://github.com/innat/Video-FocalNets/releases/tag/v1.0).
 - **[27-10-2023]:**  Code of **Video-FocalNet** in Keras becomes available.
