@@ -31,13 +31,14 @@ pip install -e .
 
 # Usage
 
-The Video-FocalNet checkpoints are available in both **SavedModel** and **H5** formats. The variants of this models are tiny, small, and base. Check this release and [model zoo](MODEL_ZOO.md) page to know details of it. Following are some hightlights.
+The Video-FocalNet checkpoints are available in both **SavedModel** and **H5** formats. The variants of this models are tiny, small, and base. Check this [release](https://github.com/innat/Video-FocalNets/releases/tag/v1.0) and [model zoo](MODEL_ZOO.md) page to know details of it. Following are some hightlights.
 
 **Inference**
 
 ```python
 >>> from videofocalnet import VideoFocalNetT
 >>> model = VideoFocalNetT(name='FocalNetT_K400')
+>>> _ = model(np.ones(shape=(1, 8, 224, 224, 3)))
 >>> model.load_weights('TFVideoFocalNetT_K400_8x224.h5')
 >>> container = read_video('sample.mp4')
 >>> frames = frame_sampling(container, num_frames=8)
@@ -100,7 +101,7 @@ The 3D video-focalnet checkpoints are listed in [MODEL_ZOO.md](MODEL_ZOO.md).
 
 ##  Citation
 
-If you use this videoswin implementation in your research, please cite it using the metadata from our `CITATION.cff` file.
+If you use this video-focalnet implementation in your research, please cite it using the metadata from our `CITATION.cff` file.
 
 ```swift
 @InProceedings{Wasim_2023_ICCV,
