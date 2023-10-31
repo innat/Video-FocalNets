@@ -1,7 +1,5 @@
-
-
 MODEL_CONFIGS = {
-    # K400
+    # K400 (Kinetics-400)
     "FocalNetT_K400": {
         'input_shape':224,
         'num_classes':400,
@@ -30,7 +28,7 @@ MODEL_CONFIGS = {
         'focal_windows':[3, 3, 3, 3],
     }, 
 
-    # K600
+    # K600 (Kinetics-600)
     "FocalNetB_K600": {
         'input_shape':224,
         'num_classes':600,
