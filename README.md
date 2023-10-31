@@ -4,7 +4,7 @@
 
 [![Palestine](https://img.shields.io/badge/Free-Palestine-white?labelColor=green)](https://twitter.com/search?q=%23FreePalestine&src=typed_query)
 
-[![arXiv](https://img.shields.io/badge/arXiv-2307.06947-darkred)](https://arxiv.org/abs/2307.06947) [![keras-2.12.](https://img.shields.io/badge/keras-2.12-darkred)]([?](https://img.shields.io/badge/keras-2.12-darkred)) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](?) [![HugginFace badge](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-yellow.svg)](?) [![HugginFace badge](https://img.shields.io/badge/🤗%20Hugging%20Face-Hub-yellow.svg)](?)
+[![arXiv](https://img.shields.io/badge/arXiv-2307.06947-darkred)](https://arxiv.org/abs/2307.06947) [![keras-2.12.](https://img.shields.io/badge/keras-2.12-darkred)]([?](https://img.shields.io/badge/keras-2.12-darkred)) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](?) [![HugginFace badge](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-yellow.svg)](?) [![HugginFace badge](https://img.shields.io/badge/🤗%20Hugging%20Face-Hub-yellow.svg)](https://github.com/innat/Video-FocalNets)
 
 
 **Video-FocalNet** is an architecture for efficient video recognition that is effectively modeled on both local and global contexts. A spatio-temporal focal modulation approach is utilized, in which self-attention steps are optimized for greater efficiency through cost-effective convolution and element-wise multiplication. After extensive exploration, the parallel spatial and temporal encoding was determined to be the best design choice.
