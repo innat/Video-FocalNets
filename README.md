@@ -86,7 +86,7 @@ model.predict(...)
 
 **[WIP] Spatio-Temporal Modulator [GradCAM]**
 
-Here are some visual demonstration of first and last layer **Spatio-Temporal Modulator** of Video-FocalNet.
+Here are some visual demonstration of first and last layer **Spatio-Temporal Modulator** of Video-FocalNet. More details [visual-gradcam.ipynb](https://github.com/innat/Video-FocalNets/blob/main/notebooks/visual_spatio_temporal_gradcam.ipynb).
 
 
 ## Model Zoo
