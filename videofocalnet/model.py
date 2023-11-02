@@ -6,15 +6,15 @@ import warnings
 warnings.simplefilter(action="ignore")
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-import tensorflow as tf
-from tensorflow import keras 
-from tensorflow.keras import layers
+import keras 
+from keras import ops
+from keras import layers
 
-from videofocalnet.layers import TFPatchEmbed
-from videofocalnet.blocks import TFBasicLayer
+from videofocalnet.layers import PatchEmbed
+from videofocalnet.blocks import BasicLayer
 from .model_configs import MODEL_CONFIGS
 
-class TFVideoFocalNet(keras.Model):
+class VideoFocalNet(keras.Model):
     r"""Spatio Temporal Focal Modulation Networks (Video-FocalNets)
 
     Args:
@@ -78,7 +78,7 @@ class TFVideoFocalNet(keras.Model):
         self.num_frames = num_frames//self.tubelet_size
         
         # image embedding
-        self.patch_embed = TFPatchEmbed(
+        self.patch_embed = PatchEmbed(
             img_size=(input_shape, )*2, 
             patch_size=patch_size, 
             in_chans=in_chans, 
@@ -95,12 +95,12 @@ class TFVideoFocalNet(keras.Model):
         self.pos_drop = layers.Dropout(drop_rate)
 
         # stochastic depth
-        dpr = tf.linspace(0., drop_path_rate, sum(depths)).numpy().tolist()
+        dpr = ops.linspace(0., drop_path_rate, sum(depths)).numpy().tolist()
         
         # build layers
         self.basic_layers = []
         for i_layer in range(self.num_layers):
-            layer = TFBasicLayer(
+            layer = BasicLayer(
                 dim=embed_dim[i_layer], 
                 out_dim=embed_dim[i_layer+1] if (i_layer < self.num_layers - 1) else None,  
                 input_resolution=(
@@ -112,7 +112,7 @@ class TFVideoFocalNet(keras.Model):
                 drop=drop_rate, 
                 drop_path=dpr[sum(depths[:i_layer]):sum(depths[:i_layer + 1])],
                 norm_layer=norm_layer, 
-                downsample=TFPatchEmbed if (i_layer < self.num_layers - 1) else None,
+                downsample=PatchEmbed if (i_layer < self.num_layers - 1) else None,
                 focal_level=focal_levels[i_layer], 
                 focal_window=focal_windows[i_layer], 
                 use_conv_embed=use_conv_embed,
@@ -153,7 +153,7 @@ class TFVideoFocalNet(keras.Model):
         return x
     
     def call(self, x, return_stfm=False, **kwargs):
-        input_shape = tf.shape(x)
+        input_shape = ops.shape(x)
         batch_size, depth, height, width, channel = (
             input_shape[0],
             input_shape[1],
@@ -163,7 +163,7 @@ class TFVideoFocalNet(keras.Model):
         )
         
         if self.tubelet_size==1:
-            x = tf.reshape(
+            x = ops.reshape(
                 x, [-1, height, width, channel]
             )
             
@@ -173,8 +173,8 @@ class TFVideoFocalNet(keras.Model):
             x, stfm_dicts = x
         
         # Here just aggregate the corresponding frames of same video BxT, C
-        x = tf.reshape(x, [batch_size, self.num_frames, -1])
-        x = tf.reduce_mean(x, axis=1)
+        x = ops.reshape(x, [batch_size, self.num_frames, -1])
+        x = ops.mean(x, axis=1)
         x = self.head(x)
         
         if return_stfm:
@@ -196,17 +196,17 @@ class TFVideoFocalNet(keras.Model):
 def VideoFocalNetT(name='FocalNetT_K400', **kwargs):
     config = MODEL_CONFIGS[name].copy()
     config.update(kwargs)
-    model = TFVideoFocalNet(name=name, **config)
+    model = VideoFocalNet(name=name, **config)
     return model
 
 def VideoFocalNetS(name='FocalNetS_K400', **kwargs):
     config = MODEL_CONFIGS[name].copy()
     config.update(kwargs)
-    model = TFVideoFocalNet(name=name, **config)
+    model = VideoFocalNet(name=name, **config)
     return model
 
 def VideoFocalNetB(name='FocalNetB_K400', **kwargs):
     config = MODEL_CONFIGS[name].copy()
     config.update(kwargs)
-    model = TFVideoFocalNet(name=name, **config)
+    model = VideoFocalNet(name=name, **config)
     return model
