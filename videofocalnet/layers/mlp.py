@@ -1,5 +1,5 @@
-
 from keras import layers
+
 
 class Mlp(layers.Layer):
     def __init__(
@@ -26,4 +26,3 @@ class Mlp(layers.Layer):
         x = self.fc2(x)
         x = self.drop(x, training=training)
         return x
-    

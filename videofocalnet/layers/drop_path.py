@@ -1,7 +1,6 @@
-
 import keras
-from keras import ops
-from keras import layers
+from keras import layers, ops
+
 
 class DropPath(layers.Layer):
     def __init__(self, rate=0.5, seed=None, **kwargs):
@@ -26,4 +25,3 @@ class DropPath(layers.Layer):
         config = super().get_config()
         config.update({"rate": self.rate, "seed": self.seed})
         return config
-    

@@ -1,11 +1,9 @@
-
 import keras
-from keras import ops
-from keras import layers
+from keras import layers, ops
 
 
 class PatchEmbed(keras.Model):
-    """ Image to Patch Embedding
+    """Image to Patch Embedding
 
     Args:
         img_size (int): Image size.  Default: 224.
@@ -14,22 +12,28 @@ class PatchEmbed(keras.Model):
         embed_dim (int): Number of linear projection output channels. Default: 96.
         norm_layer (nn.Module, optional): Normalization layer. Default: None
     """
+
     def __init__(
-        self, 
-        img_size=(224, 224), 
-        patch_size=4, 
-        in_chans=3, 
+        self,
+        img_size=(224, 224),
+        patch_size=4,
+        in_chans=3,
         embed_dim=96,
-        use_conv_embed=False, 
-        norm_layer=None, 
-        is_stem=False, 
-        tubelet_size=1, 
+        use_conv_embed=False,
+        norm_layer=None,
+        is_stem=False,
+        tubelet_size=1,
         **kwargs
     ):
         super().__init__(**kwargs)
 
-        patch_size = (patch_size, patch_size) if isinstance(patch_size, int) else patch_size
-        patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1]]
+        patch_size = (
+            (patch_size, patch_size) if isinstance(patch_size, int) else patch_size
+        )
+        patches_resolution = [
+            img_size[0] // patch_size[0],
+            img_size[1] // patch_size[1],
+        ]
         self.img_size = img_size
         self.patch_size = patch_size
         self.patches_resolution = patches_resolution
@@ -41,39 +45,31 @@ class PatchEmbed(keras.Model):
         if use_conv_embed:
             if is_stem:
                 kernel_size = 7
-                padding = 'valid'
+                padding = "valid"
                 stride = 4
             else:
                 kernel_size = 3
-                padding = 'same'
+                padding = "same"
                 stride = 2
             self.proj = layers.Conv2D(
-                embed_dim, 
-                kernel_size, 
-                strides=stride, 
-                padding=padding
+                embed_dim, kernel_size, strides=stride, padding=padding
             )
         else:
             if tubelet_size == 1:
-                self.proj = layers.Conv2D(
-                    embed_dim, 
-                    patch_size, 
-                    strides=patch_size
-                )
+                self.proj = layers.Conv2D(embed_dim, patch_size, strides=patch_size)
             else:
                 self.proj = layers.Conv3D(
-                    embed_dim, 
-                    (tubelet_size, *patch_size), 
-                    strides=(tubelet_size, *patch_size)
+                    embed_dim,
+                    (tubelet_size, *patch_size),
+                    strides=(tubelet_size, *patch_size),
                 )
-        
+
         if norm_layer:
             self.norm = norm_layer(axis=-1, epsilon=1e-05)
         else:
             self.norm = None
 
     def call(self, x):
-        
         if self.tubelet_size == 1:
             x = self.proj(x)
             input_shape = ops.shape(x)
@@ -83,13 +79,11 @@ class PatchEmbed(keras.Model):
                 input_shape[2],
                 input_shape[3],
             )
-            x = ops.reshape(
-                x, [batch_size, height*width, channel]
-            )
-            
+            x = ops.reshape(x, [batch_size, height * width, channel])
+
             if self.norm is not None:
                 x = self.norm(x)
-            
+
             return x, height, width
 
         else:
@@ -102,11 +96,9 @@ class PatchEmbed(keras.Model):
                 input_shape[3],
                 input_shape[4],
             )
-            x = ops.reshape(
-                x, [batch_size*depth, height*width, channel]
-            )
+            x = ops.reshape(x, [batch_size * depth, height * width, channel])
 
             if self.norm is not None:
                 x = self.norm(x)
- 
+
             return x, height, width
