@@ -1,9 +1,6 @@
-import os
 import warnings
 from functools import partial
-
 warnings.simplefilter(action="ignore")
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 import keras
 from keras import layers, ops
