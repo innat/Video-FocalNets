@@ -3,9 +3,9 @@ import keras
 from keras import ops
 from keras import layers
 
-from ..layers import TFSpatioTemporalFocalModulation
-from ..layers import TFDropPath
-from ..layers import TFMlp
+from ..layers import SpatioTemporalFocalModulation
+from ..layers import DropPath
+from ..layers import Mlp
 
 
 class VideoFocalNetBlock(keras.Model):
@@ -53,7 +53,7 @@ class VideoFocalNetBlock(keras.Model):
         self.norm1 = norm_layer(axis=-1, epsilon=1e-05)
         
         # layers
-        self.modulation = TFSpatioTemporalFocalModulation(
+        self.modulation = SpatioTemporalFocalModulation(
             dim, 
             proj_drop=drop, 
             focal_window=focal_window, 
