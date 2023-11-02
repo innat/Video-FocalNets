@@ -1,10 +1,10 @@
 
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
+import keras
+from keras import ops
+from keras import layers
 
 
-class TFPatchEmbed(keras.Model):
+class PatchEmbed(keras.Model):
     """ Image to Patch Embedding
 
     Args:
@@ -76,14 +76,14 @@ class TFPatchEmbed(keras.Model):
         
         if self.tubelet_size == 1:
             x = self.proj(x)
-            input_shape = tf.shape(x)
+            input_shape = ops.shape(x)
             batch_size, height, width, channel = (
                 input_shape[0],
                 input_shape[1],
                 input_shape[2],
                 input_shape[3],
             )
-            x = tf.reshape(
+            x = ops.reshape(
                 x, [batch_size, height*width, channel]
             )
             
@@ -94,7 +94,7 @@ class TFPatchEmbed(keras.Model):
 
         else:
             x = self.proj(x)
-            input_shape = tf.shape(x)
+            input_shape = ops.shape(x)
             batch_size, depth, height, width, channel = (
                 input_shape[0],
                 input_shape[1],
@@ -102,7 +102,7 @@ class TFPatchEmbed(keras.Model):
                 input_shape[3],
                 input_shape[4],
             )
-            x = tf.reshape(
+            x = ops.reshape(
                 x, [batch_size*depth, height*width, channel]
             )
 
