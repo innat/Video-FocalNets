@@ -1,9 +1,8 @@
+import keras
+from keras import layers, ops
 
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
 
-class TFDropPath(layers.Layer):
+class DropPath(layers.Layer):
     def __init__(self, rate=0.5, seed=None, **kwargs):
         super().__init__(**kwargs)
         self.rate = rate
@@ -14,7 +13,7 @@ class TFDropPath(layers.Layer):
             return x
         else:
             keep_prob = 1 - self.rate
-            drop_map_shape = (tf.shape(x)[0],) + (1,) * (len(x.shape) - 1)
+            drop_map_shape = (ops.shape(x)[0],) + (1,) * (len(x.shape) - 1)
             drop_map = keras.backend.random_bernoulli(
                 drop_map_shape, p=keep_prob, seed=self.seed, dtype=x.dtype
             )
@@ -26,4 +25,3 @@ class TFDropPath(layers.Layer):
         config = super().get_config()
         config.update({"rate": self.rate, "seed": self.seed})
         return config
-    

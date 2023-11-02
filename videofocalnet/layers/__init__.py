@@ -1,5 +1,4 @@
-
-from .mlp import TFMlp
-from .drop_path import TFDropPath
-from .patch_embed import TFPatchEmbed
-from .spatio_temporal_focal_modulation import TFSpatioTemporalFocalModulation
+from .drop_path import DropPath
+from .mlp import Mlp
+from .patch_embed import PatchEmbed
+from .spatio_temporal_focal_modulation import SpatioTemporalFocalModulation

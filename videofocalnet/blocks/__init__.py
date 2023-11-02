@@ -1,3 +1,2 @@
-
-from .focal_block import TFVideoFocalNetBlock
-from .basic import TFBasicLayer
+from .basic import BasicLayer
+from .focal_block import VideoFocalNetBlock

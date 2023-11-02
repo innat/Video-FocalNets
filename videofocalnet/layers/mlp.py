@@ -1,15 +1,14 @@
+from keras import layers
 
-import tensorflow as tf
-from tensorflow.keras import layers
 
-class TFMlp(layers.Layer):
+class Mlp(layers.Layer):
     def __init__(
         self,
         in_features,
         hidden_features=None,
         out_features=None,
         drop=0.0,
-        act_layer=layers.Activation(tf.nn.gelu),
+        act_layer=layers.Activation("gelu"),
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -27,4 +26,3 @@ class TFMlp(layers.Layer):
         x = self.fc2(x)
         x = self.drop(x, training=training)
         return x
-    
