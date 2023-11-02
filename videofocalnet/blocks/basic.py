@@ -1,14 +1,14 @@
 
 from functools import partial
 
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
+import keras
+from keras import ops
+from keras import layers
 
-from .focal_block import TFVideoFocalNetBlock
+from .focal_block import VideoFocalNetBlock
 
 
-class TFBasicLayer(keras.Model):
+class BasicLayer(keras.Model):
     """ A basic Focal Transformer layer for one stage.
 
     Args:
@@ -62,7 +62,7 @@ class TFBasicLayer(keras.Model):
         # blocks
         uid = keras.backend.get_uid(prefix="blocks")
         self.blocks = [
-            TFVideoFocalNetBlock(
+            VideoFocalNetBlock(
                 dim=dim,
                 input_resolution=input_resolution,
                 mlp_ratio=mlp_ratio,
@@ -105,7 +105,7 @@ class TFBasicLayer(keras.Model):
                 x = blk(x, height, width)
 
         if self.downsample is not None:
-            x = tf.reshape(x, [tf.shape(x)[0], height, width, -1])
+            x = ops.reshape(x, [ops.shape(x)[0], height, width, -1])
             x, height_o, width_o = self.downsample(x)
         else:
             height_o, width_o = height, width

@@ -1,14 +1,14 @@
 
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
+import keras
+from keras import ops
+from keras import layers
 
 from ..layers import TFSpatioTemporalFocalModulation
 from ..layers import TFDropPath
 from ..layers import TFMlp
 
 
-class TFVideoFocalNetBlock(keras.Model):
+class VideoFocalNetBlock(keras.Model):
     r""" Focal Modulation Network Block.
 
     Args:
@@ -33,7 +33,7 @@ class TFVideoFocalNetBlock(keras.Model):
         mlp_ratio=4., 
         drop=0.,
         drop_path=0., 
-        act_layer=layers.Activation(tf.nn.gelu), 
+        act_layer=layers.Activation('gelu'), 
         norm_layer=layers.LayerNormalization,
         focal_level=1, focal_window=3,
         use_layerscale=False, layerscale_value=1e-4, 
@@ -62,9 +62,9 @@ class TFVideoFocalNetBlock(keras.Model):
             normalize_modulator=normalize_modulator,
             num_frames=self.num_frames
         )
-        self.drop_path = TFDropPath(drop_path) if drop_path > 0. else layers.Identity()
+        self.drop_path = DropPath(drop_path) if drop_path > 0. else layers.Identity()
         self.norm2 = norm_layer(axis=-1, epsilon=1e-05)
-        self.mlp = TFMlp(
+        self.mlp = Mlp(
             in_features=dim,
             hidden_features=int(dim * mlp_ratio),
             drop=drop,
@@ -90,7 +90,7 @@ class TFVideoFocalNetBlock(keras.Model):
             
 
     def call(self, x, height, width, return_stfm=False):
-        input_shape = tf.shape(x)
+        input_shape = ops.shape(x)
         batch_size, length, channel = (
             input_shape[0],
             input_shape[1],
@@ -100,9 +100,9 @@ class TFVideoFocalNetBlock(keras.Model):
 
         # Focal Modulation
         x = x if self.use_postln else self.norm1(x)
-        x = tf.reshape(x, [batch_size, height, width, channel])
+        x = ops.reshape(x, [batch_size, height, width, channel])
         spatio_temporal_fm = self.modulation(x)
-        x = tf.reshape(spatio_temporal_fm, [batch_size, height * width, channel])
+        x = ops.reshape(spatio_temporal_fm, [batch_size, height * width, channel])
         x = x if not self.use_postln else self.norm1(x)
 
         # FFN
