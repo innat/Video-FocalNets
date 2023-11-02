@@ -122,7 +122,7 @@ class VideoFocalNet(keras.Model):
                 use_postln_in_modulation=use_postln_in_modulation,
                 normalize_modulator=normalize_modulator,
                 num_frames=self.num_frames,
-                name=f"TFBasicLayer{i_layer+1}",
+                name=f"BasicLayer{i_layer+1}",
             )
             self.basic_layers.append(layer)
 
