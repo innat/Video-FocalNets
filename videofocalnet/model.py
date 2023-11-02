@@ -88,7 +88,7 @@ class VideoFocalNet(keras.Model):
             norm_layer=norm_layer if self.patch_norm else None,
             is_stem=True,
             tubelet_size=tubelet_size,
-            name="TFPatchEmbed",
+            name="PatchEmbed",
         )
         num_patches = self.patch_embed.num_patches
         patches_resolution = self.patch_embed.patches_resolution

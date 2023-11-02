@@ -76,7 +76,7 @@ class BasicLayer(keras.Model):
                 use_postln_in_modulation=use_postln_in_modulation,
                 normalize_modulator=normalize_modulator,
                 num_frames=self.num_frames,
-                name=f"TFVideoFocalNetBlock_id{uid}",
+                name=f"VideoFocalNetBlock_id{uid}",
             )
             for i in range(depth)
         ]
