@@ -139,10 +139,14 @@ class VideoFocalNet(keras.Model):
         stfm_dicts = {}
         for layer in self.basic_layers:
             if return_stfm:
-                x, height, width, stfm_dict = layer(x, height, width, return_stfm)
+                x, height, width, stfm_dict = layer(
+                    x, height=height, width=width, return_stfm=return_stfm
+                    )
                 stfm_dicts.update(stfm_dict)
             else:
-                x, height, width = layer(x, height, width)
+                x, height, width = layer(
+                    x, height=height, width=width, return_stfm=False
+                    )
 
         x = self.norm(x)
         x = self.avgpool(x)

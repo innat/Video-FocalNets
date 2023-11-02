@@ -99,10 +99,12 @@ class BasicLayer(keras.Model):
         sp_fm_dict = {}
         for i, blk in enumerate(self.blocks):
             if return_stfm:
-                x, stfm = blk(x, height, width, return_stfm)
+                x, stfm = blk(
+                    x, height=height, width=width, return_stfm=return_stfm
+                    )
                 sp_fm_dict[f"{blk.name}{i+1}"] = stfm
             else:
-                x = blk(x, height, width)
+                x = blk(x, height=height, width=width, return_stfm=False)
 
         if self.downsample is not None:
             x = ops.reshape(x, [ops.shape(x)[0], height, width, -1])
